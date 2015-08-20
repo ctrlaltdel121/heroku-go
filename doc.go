@@ -25,7 +25,7 @@ Installation
 This package is targeted towards Go 1.2 or later, though it may work on
 earlier versions as well.
 
-Run `go get github.com/bgentry/heroku-go` to download, build, and install the
+Run `go get github.com/ctrlaltdel121/heroku-go` to download, build, and install the
 package.
 
 Getting Started
@@ -33,7 +33,7 @@ Getting Started
 To use the client, first add it to your Go file's imports list:
 
   import (
-    "github.com/bgentry/heroku-go"
+    "github.com/ctrlaltdel121/heroku-go"
   )
 
 Then create a Client object and make calls to it:

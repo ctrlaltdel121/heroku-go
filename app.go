@@ -132,4 +132,6 @@ type AppUpdateOpts struct {
 	Maintenance *bool `json:"maintenance,omitempty"`
 	// unique name of app
 	Name *string `json:"name,omitempty"`
+	// build stack
+	BuildStack *string `json:"build_stack,omitempty"`
 }
