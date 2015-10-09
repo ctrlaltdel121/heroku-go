@@ -53,6 +53,7 @@ func (c *Client) DynoCreate(appIdentity string, command string, options *DynoCre
 	params := struct {
 		Command string             `json:"command"`
 		Attach  *bool              `json:"attach,omitempty"`
+		TTY     *bool              `json:"tty,omitempty"`
 		Env     *map[string]string `json:"env,omitempty"`
 		Size    *string            `json:"size,omitempty"`
 	}{
@@ -60,6 +61,7 @@ func (c *Client) DynoCreate(appIdentity string, command string, options *DynoCre
 	}
 	if options != nil {
 		params.Attach = options.Attach
+		params.TTY = options.TTY
 		params.Env = options.Env
 		params.Size = options.Size
 	}
@@ -75,6 +77,8 @@ type DynoCreateOpts struct {
 	Env *map[string]string `json:"env,omitempty"`
 	// dyno size (default: "1X")
 	Size *string `json:"size,omitempty"`
+	// whether to allocate a TTY or not
+	TTY *bool `json:"tty,omitempty"`
 }
 
 // Restart dyno.
