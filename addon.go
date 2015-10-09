@@ -22,6 +22,9 @@ type Addon struct {
 	// name of the add-on unique within its app
 	Name string `json:"name"`
 
+	// message returned from provider
+	Message string `json:"message"`
+
 	// identity of add-on plan
 	Plan struct {
 		Id   string `json:"id"`
