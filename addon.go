@@ -27,15 +27,22 @@ type Addon struct {
 
 	// identity of add-on plan
 	Plan struct {
-		Id   string `json:"id"`
-		Name string `json:"name"`
+		Id    string          `json:"id"`
+		Name  string          `json:"name"`
+		Price *AddonPlanPrice `json:"price,omitempty`
 	} `json:"plan"`
+
+	App App `json:"app"`
 
 	// id of this add-on with its provider
 	ProviderId string `json:"provider_id"`
 
 	// when add-on was updated
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type AddonPlanPrice struct {
+	Cents int `json:"cents"`
 }
 
 // Create a new add-on.
@@ -45,13 +52,17 @@ type Addon struct {
 // optional parameters for this action.
 func (c *Client) AddonCreate(appIdentity string, plan string, options *AddonCreateOpts) (*Addon, error) {
 	params := struct {
-		Plan   string             `json:"plan"`
-		Config *map[string]string `json:"config,omitempty"`
+		Plan       string             `json:"plan"`
+		Config     *map[string]string `json:"config,omitempty"`
+		Attachment *map[string]string `json:"attachment,omitempty"`
 	}{
 		Plan: plan,
 	}
-	if options != nil {
+	if options != nil && options.Config != nil {
 		params.Config = options.Config
+	}
+	if options != nil && options.Attachment != nil {
+		params.Attachment = options.Attachment
 	}
 	var addonRes Addon
 	return &addonRes, c.Post(&addonRes, "/apps/"+appIdentity+"/addons", params)
@@ -60,7 +71,8 @@ func (c *Client) AddonCreate(appIdentity string, plan string, options *AddonCrea
 // AddonCreateOpts holds the optional parameters for AddonCreate
 type AddonCreateOpts struct {
 	// custom add-on provisioning options
-	Config *map[string]string `json:"config,omitempty"`
+	Config     *map[string]string `json:"config,omitempty"`
+	Attachment *map[string]string `json:"attachment,omitempty"`
 }
 
 // Delete an existing add-on.
@@ -112,4 +124,10 @@ func (c *Client) AddonUpdate(appIdentity string, addonIdentity string, plan stri
 	}
 	var addonRes Addon
 	return &addonRes, c.Patch(&addonRes, "/apps/"+appIdentity+"/addons/"+addonIdentity, params)
+}
+
+// List all addons belonging to the current user
+func (c *Client) AddonListAll() ([]Addon, error) {
+	var addons []Addon
+	return addons, c.Get(&addons, "/addons")
 }
