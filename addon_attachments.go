@@ -31,19 +31,23 @@ type AttachmentAddon struct {
 // appIdentity is the unique identifier of the Addon's App. plan is the unique
 // identifier of this plan or unique name of this plan. options is the struct of
 // optional parameters for this action.
-// func (c *Client) AddonCreate(appIdentity string, plan string, options *AddonCreateOpts) (*Addon, error) {
-// 	params := struct {
-// 		Plan   string             `json:"plan"`
-// 		Config *map[string]string `json:"config,omitempty"`
-// 	}{
-// 		Plan: plan,
-// 	}
-// 	if options != nil {
-// 		params.Config = options.Config
-// 	}
-// 	var addonRes Addon
-// 	return &addonRes, c.Post(&addonRes, "/apps/"+appIdentity+"/addons", params)
-// }
+func (c *Client) AddonAttachmentCreate(appIdentity, addonName, attachmentName string) (*AddonAttachment, error) {
+	type attachmentPostBody struct {
+		App struct {
+			Name string `json:"name"`
+		} `json:"app"`
+		Addon struct {
+			Name string `json:"name"`
+		} `json:"addon"`
+		Name string `json:"name,omitempty"`
+	}
+	var params attachmentPostBody
+	params.App.Name = appIdentity
+	params.Addon.Name = addonName
+	params.Name = attachmentName
+	var attachmentRes AddonAttachment
+	return &attachmentRes, c.Post(&attachmentRes, "/addon-attachments", params)
+}
 
 // // AddonCreateOpts holds the optional parameters for AddonCreate
 // type AddonCreateOpts struct {
