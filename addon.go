@@ -45,13 +45,15 @@ type Addon struct {
 // optional parameters for this action.
 func (c *Client) AddonCreate(appIdentity string, plan string, options *AddonCreateOpts) (*Addon, error) {
 	params := struct {
-		Plan   string             `json:"plan"`
-		Config *map[string]string `json:"config,omitempty"`
+		Plan       string             `json:"plan"`
+		Config     *map[string]string `json:"config,omitempty"`
+		Attachment *map[string]string `json:"attachment,omitempty"`
 	}{
 		Plan: plan,
 	}
 	if options != nil {
 		params.Config = options.Config
+		params.Attachment = options.Attachment
 	}
 	var addonRes Addon
 	return &addonRes, c.Post(&addonRes, "/apps/"+appIdentity+"/addons", params)
@@ -60,7 +62,8 @@ func (c *Client) AddonCreate(appIdentity string, plan string, options *AddonCrea
 // AddonCreateOpts holds the optional parameters for AddonCreate
 type AddonCreateOpts struct {
 	// custom add-on provisioning options
-	Config *map[string]string `json:"config,omitempty"`
+	Config     *map[string]string `json:"config,omitempty"`
+	Attachment *map[string]string `json:"attachment,omitempty"`
 }
 
 // Delete an existing add-on.
