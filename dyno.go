@@ -122,3 +122,19 @@ func (c *Client) DynoList(appIdentity string, lr *ListRange) ([]Dyno, error) {
 	var dynosRes []Dyno
 	return dynosRes, c.DoReq(req, &dynosRes)
 }
+
+type DynoStatus struct {	
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	Status      string    `json:"status"`    // "pending", "successful", "failed"
+	ExitCode    *int      `json:"exit_code"` // null until successful/failed, then int
+}
+
+// Info for dyno status.
+//
+// appIdentity is the unique identifier of the Dyno's App. dynoIdentity is the
+// unique identifier of the Dyno.
+func (c *Client) DynoStatus(appIdentity string, dynoIdentity string) (*DynoStatus, error) {
+	var status DynoStatus
+	return &status, c.Get(&status, "/apps/"+appIdentity+"/dynos/"+dynoIdentity+"/status")
+}
