@@ -5,6 +5,7 @@
 package heroku
 
 import (
+	"strings"
 	"time"
 )
 
@@ -89,7 +90,13 @@ func (c *Client) AddonDelete(appIdentity string, addonIdentity string) error {
 // unique identifier of the Addon.
 func (c *Client) AddonInfo(appIdentity string, addonIdentity string) (*Addon, error) {
 	var addon Addon
-	return &addon, c.Get(&addon, "/apps/"+appIdentity+"/addons/"+addonIdentity)
+	if strings.Contains(addonIdentity, "::") {
+		// identity specifies a different app, use endpoint for all accessible addons
+		return &addon, c.Get(&addon, "/addons/"+addonIdentity)
+	} else {
+		return &addon, c.Get(&addon, "/apps/"+appIdentity+"/addons/"+addonIdentity)
+	}
+
 }
 
 // List existing add-ons.

@@ -4,7 +4,10 @@
 
 package heroku
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type AddonAttachment struct {
 	ID        string          `json:"id"`
@@ -26,11 +29,10 @@ type AttachmentAddon struct {
 	App  App    `json:"app"`
 }
 
-// Create a new add-on.
+// Create a new attachment.
 //
-// appIdentity is the unique identifier of the Addon's App. plan is the unique
-// identifier of this plan or unique name of this plan. options is the struct of
-// optional parameters for this action.
+// appIdentity is the unique identifier of the attachment's App. addonName is the name of the addon to attach to.
+// attachment name is the name you want. empty string is default
 func (c *Client) AddonAttachmentCreate(appIdentity, addonName, attachmentName string) (*AddonAttachment, error) {
 	type attachmentPostBody struct {
 		App struct {
@@ -49,56 +51,27 @@ func (c *Client) AddonAttachmentCreate(appIdentity, addonName, attachmentName st
 	return &attachmentRes, c.Post(&attachmentRes, "/addon-attachments", params)
 }
 
-// // AddonCreateOpts holds the optional parameters for AddonCreate
-// type AddonCreateOpts struct {
-// 	// custom add-on provisioning options
-// 	Config *map[string]string `json:"config,omitempty"`
-// }
-
-// // Delete an existing add-on.
-// //
-// // appIdentity is the unique identifier of the Addon's App. addonIdentity is the
-// // unique identifier of the Addon.
-// func (c *Client) AddonDelete(appIdentity string, addonIdentity string) error {
-// 	return c.Delete("/apps/" + appIdentity + "/addons/" + addonIdentity)
-// }
-
 // List all attachments attached to the given user's apps
 func (c *Client) AddonAttachmentList() ([]AddonAttachment, error) {
 	var attachments []AddonAttachment
 	return attachments, c.Get(&attachments, "/addon-attachments")
 }
 
-// List existing add-ons.
+// Get info on an attachment. Will use the unscoped endpoint if there is a :: in the identity string.
+func (c *Client) AddonAttachmentInfo(appIdentity string, attachmentIdentity string) (*AddonAttachment, error) {
+	var attachment AddonAttachment
+	if strings.Contains(attachmentIdentity, "::") {
+		// identity specifies a different app, use endpoint for all accessible addons
+		return &attachment, c.Get(&attachment, "/addon-attachments/"+attachmentIdentity)
+	} else {
+		return &attachment, c.Get(&attachment, "/apps/"+appIdentity+"/addon-attachments/"+attachmentIdentity)
+	}
+}
+
+// Delete an existing attachment.
 //
-// appIdentity is the unique identifier of the Addon's App. lr is an optional
-// ListRange that sets the Range options for the paginated list of results.
-// func (c *Client) AddonList(appIdentity string, lr *ListRange) ([]Addon, error) {
-// 	req, err := c.NewRequest("GET", "/apps/"+appIdentity+"/addons", nil)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	if lr != nil {
-// 		lr.SetHeader(req)
-// 	}
-
-// 	var addonsRes []Addon
-// 	return addonsRes, c.DoReq(req, &addonsRes)
-// }
-
-// // Change add-on plan. Some add-ons may not support changing plans. In that
-// // case, an error will be returned.
-// //
-// // appIdentity is the unique identifier of the Addon's App. addonIdentity is the
-// // unique identifier of the Addon. plan is the unique identifier of this plan or
-// // unique name of this plan.
-// func (c *Client) AddonUpdate(appIdentity string, addonIdentity string, plan string) (*Addon, error) {
-// 	params := struct {
-// 		Plan string `json:"plan"`
-// 	}{
-// 		Plan: plan,
-// 	}
-// 	var addonRes Addon
-// 	return &addonRes, c.Patch(&addonRes, "/apps/"+appIdentity+"/addons/"+addonIdentity, params)
-// }
+// appIdentity is the unique identifier of the Attachment's App. attachmentIdentity is the
+// unique identifier of the attachment.
+func (c *Client) AddonAttachmentDelete(attachmentIdentity string) error {
+	return c.Delete("/addon-attachments/" + attachmentIdentity)
+}
