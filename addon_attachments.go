@@ -27,6 +27,9 @@ type AttachmentAddon struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 	App  App    `json:"app"`
+	Plan struct {
+		Name string `json:"name"`
+	} `json:"plan"`
 }
 
 // Create a new attachment.
