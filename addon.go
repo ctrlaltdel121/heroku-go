@@ -91,12 +91,16 @@ func (c *Client) AddonDelete(appIdentity string, addonIdentity string) error {
 func (c *Client) AddonInfo(appIdentity string, addonIdentity string) (*Addon, error) {
 	var addon Addon
 	if strings.Contains(addonIdentity, "::") {
-		// identity specifies a different app, use endpoint for all accessible addons
-		return &addon, c.Get(&addon, "/addons/"+addonIdentity)
+		// identity specifies a different app, use global endpoint
+		return c.GlobalAddonInfo(addonIdentity)
 	} else {
 		return &addon, c.Get(&addon, "/apps/"+appIdentity+"/addons/"+addonIdentity)
 	}
+}
 
+func (c *Client) GlobalAddonInfo(addonIdentity string) (*Addon, error) {
+	var addon Addon
+	return &addon, c.Get(&addon, "/addons/"+addonIdentity)
 }
 
 // List existing add-ons.
