@@ -33,20 +33,18 @@ type AttachmentAddon struct {
 //
 // appIdentity is the unique identifier of the attachment's App. addonName is the name of the addon to attach to.
 // attachment name is the name you want. empty string is default
-func (c *Client) AddonAttachmentCreate(appIdentity, addonName, attachmentName string) (*AddonAttachment, error) {
+func (c *Client) AddonAttachmentCreate(appIdentity, addonName, attachmentName string, attachForce bool) (*AddonAttachment, error) {
 	type attachmentPostBody struct {
-		App struct {
-			Name string `json:"name"`
-		} `json:"app"`
-		Addon struct {
-			Name string `json:"name"`
-		} `json:"addon"`
-		Name string `json:"name,omitempty"`
+		App   string `json:"app"`
+		Addon string `json:"addon"`
+		Name  string `json:"name,omitempty"`
+		Force bool   `json:"force,omitempty"`
 	}
 	var params attachmentPostBody
-	params.App.Name = appIdentity
-	params.Addon.Name = addonName
+	params.App = appIdentity
+	params.Addon = addonName
 	params.Name = attachmentName
+	params.Force = attachForce
 	var attachmentRes AddonAttachment
 	return &attachmentRes, c.Post(&attachmentRes, "/addon-attachments", params)
 }
