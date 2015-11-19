@@ -50,9 +50,15 @@ func (c *Client) AddonAttachmentCreate(appIdentity, addonName, attachmentName st
 }
 
 // List all attachments attached to the given user's apps
-func (c *Client) AddonAttachmentList() ([]AddonAttachment, error) {
+func (c *Client) AddonAttachmentListAll() ([]AddonAttachment, error) {
 	var attachments []AddonAttachment
 	return attachments, c.Get(&attachments, "/addon-attachments")
+}
+
+// List all attachments for the provided addon identity
+func (c *Client) AddonAttachmentList(addonIdentity string) ([]AddonAttachment, error) {
+	var attachments []AddonAttachment
+	return attachments, c.Get(&attachments, "/addons/"+addonIdentity+"/addon-attachments")
 }
 
 // Get info on an attachment. Will use the unscoped endpoint if there is a :: in the identity string.
