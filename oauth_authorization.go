@@ -28,6 +28,8 @@ type OAuthAuthorization struct {
 
 	// when OAuth authorization was created
 	CreatedAt time.Time `json:"created_at"`
+	
+	Description *string `json:"description,omitempty"`
 
 	// this authorization's grant
 	Grant *struct {
