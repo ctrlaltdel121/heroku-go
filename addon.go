@@ -61,6 +61,7 @@ func (c *Client) AddonCreate(appIdentity string, plan string, options *AddonCrea
 	}
 	if options != nil && options.Config != nil {
 		params.Config = options.Config
+		params.Attachment = options.Attachment
 	}
 	if options != nil && options.Attachment != nil {
 		params.Attachment = options.Attachment
